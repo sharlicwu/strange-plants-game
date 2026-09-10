@@ -65,7 +65,7 @@
     <div class="start-screen" id="startScreen">
         <div style="font-size: 60px;">🌵</div>
         <h1>Strange Plants Challenge</h1>
-        <p>20 words, 20 seconds each. How many can you get?</p>
+        <p>11 words, 30 seconds each. How many can you get?</p>
         <button class="start-btn" onclick="startGame()">START 🚀</button>
     </div>
 
@@ -75,7 +75,7 @@
             <div class="timer-area">
                 <div class="timer-ring">
                     <svg width="60" height="60"><circle class="timer-bg" cx="30" cy="30" r="25"/><circle class="timer-progress" id="timerCircle" cx="30" cy="30" r="25"/></svg>
-                    <div class="timer-text" id="timer">20</div>
+                    <div class="timer-text" id="timer">30</div>
                 </div>
             </div>
             <span class="score-bar" id="scoreBar">⭐ 0</span>
@@ -106,26 +106,17 @@
 
 <script>
 var words = [
-    { word: "cactus", zh: "a plant with spines", icon: "🌵" },
-    { word: "daisies", zh: "flowers with white petals", icon: "🌼" },
-    { word: "buried", zh: "put under the ground", icon: "🌱" },
-    { word: "branches", zh: "parts growing from a tree", icon: "🌿" },
-    { word: "moisture", zh: "small amount of water", icon: "💧" },
-    { word: "flytrap", zh: "a plant that catches insects", icon: "🪤" },
-    { word: "swamp trees", zh: "trees in wet land", icon: "🌳" },
+    { word: "buried", zh: "put under dirt", icon: "🌱" },
+    { word: "branches", zh: "parts of a tree", icon: "🌿" },
+    { word: "moisture", zh: "water in the air", icon: "💧" },
     { word: "traps", zh: "things that catch animals", icon: "🪤" },
     { word: "spikes", zh: "sharp points", icon: "📌" },
     { word: "critter", zh: "a small animal", icon: "🐛" },
-    { word: "sundew", zh: "a sticky meat-eating plant", icon: "🪴" },
-    { word: "stuck", zh: "unable to move", icon: "🔒" },
-    { word: "digests", zh: "turns food into energy", icon: "🔄" },
-    { word: "rootlike", zh: "looking like roots", icon: "🌿" },
-    { word: "parasite", zh: "a plant that lives on others", icon: "🦠" },
-    { word: "attract", zh: "to draw near", icon: "🧲" },
-    { word: "shrubs", zh: "small bushes", icon: "🌿" },
+    { word: "stuck", zh: "cannot move", icon: "🔒" },
+    { word: "digests", zh: "eats and breaks down food", icon: "🔄" },
+    { word: "attract", zh: "to bring near", icon: "🧲" },
     { word: "cracks", zh: "small breaks in rock", icon: "🪨" },
-    { word: "stem", zh: "the main part of a plant", icon: "🌱" },
-    { word: "orchids", zh: "beautiful flowers", icon: "🌸" }
+    { word: "rootlike", zh: "looks like roots", icon: "🌿" }
 ];
 
 var questions = [];
@@ -136,7 +127,7 @@ var maxStreak = 0;
 var correctCount = 0;
 var timer = null;
 var musicTimer = null;
-var timeLeft = 20;
+var timeLeft = 30;
 var audioCtx = null;
 
 function getAudioCtx() {
@@ -174,11 +165,11 @@ function startCountdownMusic() {
         var gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        if (timeLeft > 12) {
+        if (timeLeft > 20) {
             osc.frequency.value = 80; gain.gain.value = 0.15;
             osc.start(); osc.stop(ctx.currentTime + 0.1);
             musicTimer = setTimeout(playBeat, 800);
-        } else if (timeLeft > 6) {
+        } else if (timeLeft > 10) {
             osc.frequency.value = 100; gain.gain.value = 0.2;
             osc.start(); osc.stop(ctx.currentTime + 0.08);
             musicTimer = setTimeout(playBeat, 400);
@@ -261,7 +252,7 @@ function loadQuestion() {
         grid.appendChild(btn);
     }
     setTimeout(function() { speak(q.word); }, 300);
-    timeLeft = 20;
+    timeLeft = 30;
     document.getElementById('timer').innerText = timeLeft;
     document.getElementById('timerCircle').style.strokeDashoffset = '0';
     document.getElementById('timerCircle').style.stroke = '#a8e063';
@@ -270,9 +261,9 @@ function loadQuestion() {
     timer = setInterval(function() {
         timeLeft--;
         document.getElementById('timer').innerText = timeLeft;
-        var offset = 157 - (157 * (20 - timeLeft) / 20);
+        var offset = 157 - (157 * (30 - timeLeft) / 30);
         document.getElementById('timerCircle').style.strokeDashoffset = offset;
-        if (timeLeft <= 7) { document.getElementById('timerCircle').style.stroke = '#e53935'; }
+        if (timeLeft <= 10) { document.getElementById('timerCircle').style.stroke = '#e53935'; }
         if (timeLeft <= 0) { clearInterval(timer); stopCountdownMusic(); playTimeUpSound(); timeUp(); }
     }, 1000);
 }
@@ -293,7 +284,7 @@ function checkAnswer(btn) {
     btns.forEach(function(b) { b.classList.add('disabled'); });
     if (answer === q.zh) {
         btn.classList.add('correct');
-        var bonus = timeLeft >= 14 ? 15 : timeLeft >= 7 ? 10 : 5;
+        var bonus = timeLeft >= 22 ? 15 : timeLeft >= 11 ? 10 : 5;
         score += bonus; streak++; correctCount++;
         if (streak > maxStreak) maxStreak = streak;
         playCorrectSound();
@@ -316,7 +307,7 @@ function showResult() {
     document.getElementById('statWrong').innerText = questions.length - correctCount;
     document.getElementById('statStreak').innerText = maxStreak;
     document.getElementById('resultScore').innerText = correctCount + ' / ' + questions.length;
-    if (correctCount === 20) {
+    if (correctCount === 11) {
         document.getElementById('resultEmoji').innerText = '👑';
         document.getElementById('resultTitle').innerText = 'PERFECT!';
         document.getElementById('resultDetail').innerText = 'You are the Plant Expert!';
